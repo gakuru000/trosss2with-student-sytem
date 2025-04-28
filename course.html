@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Selection</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Sample script to demonstrate interactive behavior (e.g., logging selection changes)
+    function toggleModule(moduleId) {
+      var checkbox = document.getElementById("module_" + moduleId);
+      console.log("Module " + moduleId + " selected: " + checkbox.checked);
+    }
+  </script>
+</head>
+<body>
+  <div class="course-selection-container">
+    <h2>Select Courses/Modules</h2>
+    <form action="course_selection_submit.php" method="POST">
+      <div class="form-group">
+        <label for="course">Choose Course:</label>
+        <select id="course" name="course">
+          <option value="computer_science">Computer Science</option>
+          <option value="business">Business</option>
+          <option value="engineering">Engineering</option>
+        </select>
+      </div>
+      <fieldset>
+        <legend>Select Modules:</legend>
+        <div class="checkbox-group">
+          <input type="checkbox" id="module_1" name="modules[]" value="module1" onchange="toggleModule(1)">
+          <label for="module_1">Introduction to Programming</label>
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="module_2" name="modules[]" value="module2" onchange="toggleModule(2)">
+          <label for="module_2">Data Structures</label>
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="module_3" name="modules[]" value="module3" onchange="toggleModule(3)">
+          <label for="module_3">Web Technologies</label>
+        </div>
+        <!-- Add more modules as needed -->
+      </fieldset>
+      <button type="submit" class="btn">Submit Selection</button>
+    </form>
+  </div>
+</body>
+</html>

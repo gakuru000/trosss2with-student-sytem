@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - Login, Registration & Database Viewer</title>
+  <style>
+    /* Reset and fundamental styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      background: #fff;
+      width: 500px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    /* Login Form Styling */
+    .login-form {
+      padding: 20px;
+    }
+    .login-form h2 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .login-form button {
+      width: 100%;
+      padding: 10px;
+      background: #007BFF;
+      border: none;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .login-form button:hover {
+      background: #0056b3;
+    }
+    /* Dashboard Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      background: #007BFF;
+    }
+    .nav-tabs button {
+      flex: 1;
+      padding: 15px;
+      cursor: pointer;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      outline: none;
+      transition: background 0.3s;
+    }
+    .nav-tabs button.active,
+    .nav-tabs button:hover {
+      background: #0056b3;
+    }
+    /* Content for Each Tab */
+    .tab-content {
+      padding: 20px;
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      color: #333;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <!-- Login Section -->
+    <div id="loginSection" class="login-form">
+      <h2>Login</h2>
+      <input type="text" id="username" placeholder="Username" autocomplete="off">
+      <input type="password" id="password" placeholder="Password" autocomplete="off">
+      <button onclick="handleLogin()">Login</button>
+      <p id="loginError" style="color:red; margin-top:10px;"></p>
+    </div>
+
+    <!-- Dashboard Section (hidden initially) -->
+    <div id="dashboardSection" style="display:none;">
+      <!-- Navigation Tabs for switching between forms and viewer -->
+      <div class="nav-tabs">
+        <button id="tabRegister" class="active" onclick="switchTab('register')">Student Registration</button>
+        <button id="tabViewer" onclick="switchTab('viewer')">Database Viewer</button>
+      </div>
+
+      <!-- Student Registration Form -->
+      <div id="register" class="tab-content active">
+        <h2>Student Registration</h2>
+        <div class="form-group">
+          <label for="studentName">Name</label>
+          <input type="text" id="studentName" placeholder="Enter student name">
+        </div>
+        <div class="form-group">
+          <label for="studentAge">Age</label>
+          <input type="number" id="studentAge" placeholder="Enter student age">
+        </div>
+        <div class="form-group">
+          <label for="studentId">Student ID</label>
+          <input type="text" id="studentId" placeholder="Enter student ID">
+        </div>
+        <button onclick="registerStudent()">Register Student</button>
+        <p id="registerMessage" style="margin-top:10px;"></p>
+      </div>
+
+      <!-- Database Viewer Part -->
+      <div id="viewer" class="tab-content">
+        <h2>Database Viewer</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Age</th>
+            </tr>
+          </thead>
+          <tbody id="studentTable">
+            <!-- Student records will be dynamically inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // In-memory array to store student records (for demo purposes)
+    let students = [];
+
+    // Simple mock login: username "admin" and password "admin" are accepted.
+    function handleLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const loginError = document.getElementById('loginError');
+
+      if(username === "admin" && password === "admin") {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'block';
+      } else {
+        loginError.textContent = "Invalid username or password.";
+      }
+    }
+
+    // Switch between registration and database viewer tabs
+    function switchTab(tabName) {
+      const tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach(tab => {
+        tab.classList.toggle('active', tab.id === tabName);
+      });
+
+      // Update active styling for navigation buttons
+      document.getElementById('tabRegister').classList.toggle('active', tabName === 'register');
+      document.getElementById('tabViewer').classList.toggle('active', tabName === 'viewer');
+
+      // Automatically update the table whenever the viewer tab is shown
+      if(tabName === 'viewer') {
+        updateStudentTable();
+      }
+    }
+
+    // Adds the new student to the array and clears the form
+    function registerStudent() {
+      const name = document.getElementById('studentName').value.trim();
+      const age = document.getElementById('studentAge').value.trim();
+      const studentId = document.getElementById('studentId').value.trim();
+      const registerMessage = document.getElementById('registerMessage');
+
+      if(name === "" || age === "" || studentId === "") {
+        registerMessage.style.color = "red";
+        registerMessage.textContent = "All fields are required!";
+        return;
+      }
+
+      // Create a new student object and add it to the in-memory array
+      const student = { studentId, name, age };
+      students.push(student);
+
+      registerMessage.style.color = "green";
+      registerMessage.textContent = "Student registered successfully!";
+      
+      // Clear the registration form
+      document.getElementById('studentName').value = "";
+      document.getElementById('studentAge').value = "";
+      document.getElementById('studentId').value = "";
+    }
+
+    // Update the database viewer table with the current students
+    function updateStudentTable() {
+      const studentTable = document.getElementById('studentTable');
+      studentTable.innerHTML = "";  // clear existing rows
+
+      students.forEach(student => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.studentId}</td>
+          <td>${student.name}</td>
+          <td>${student.age}</td>
+        `;
+        studentTable.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Document Upload</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="upload-container">
+    <h2>Upload Your Document</h2>
+    <form action="upload_document.php" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="document">Choose Document</label>
+        <input type="file" id="document" name="document" accept=".pdf,.doc,.docx,.jpg,.png" required>
+      </div>
+      <button type="submit" class="btn">Upload</button>
+    </form>
+  </div>
+</body>
+</html>
